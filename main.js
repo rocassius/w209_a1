@@ -21,6 +21,8 @@ viz_lib.scatter = function(data) {
     .domain(legs)
     .range(["#66ccff", "#ffcc66"]);
 
+  //var point;
+
   var plot_ = function() {
     var maxAttempt = d3.max(data.map(d => +d.attempt));
     var maxClaps = d3.max(data.map(d => +d.claps));
@@ -29,6 +31,7 @@ viz_lib.scatter = function(data) {
     x.domain([0 - pad, maxAttempt + pad]);
     y.domain([0 - pad, maxClaps + pad]);
 
+    // point = g
     g.selectAll("path.pt")
       .data(data)
       .enter()
@@ -85,8 +88,7 @@ viz_lib.scatter = function(data) {
   var legend_ = function() {
     var legend = { x: 30, y: 40, space: 45, r: 10 };
 
-    g.append("g")
-      .attr("class", "legend")
+    g.attr("class", "legend")
       .selectAll("dots")
       .data(legs)
       .enter()
@@ -103,25 +105,12 @@ viz_lib.scatter = function(data) {
       })
       .on("mouseover", function(d) {
         d3.select(this).style("fill", "red");
-        console.log(d);
+        // highlight(d); // This doesn't work
+        //  callback("left");
+      })
+      .on("mouseout", function(d) {
+        d3.select(this).style("fill", color(d));
       });
-
-    // g
-
-    //   .selectAll("dots")
-    //   .data(legs)
-    //   .enter()
-    //   .append("attr", "circle")
-    //   .attr("d", d3.symbol().type(d3.symbolCircle))
-    //   .attr("r", )
-    //   .style("fill", function(d) {
-    //     return color(d);
-    //   })
-    //   .attr("transform", function(d, i) {
-    //     return (
-    //       "translate(" + legend.x + "," + (legend.y + legend.space * i) + ")"
-    //     );
-    //   });
 
     g.selectAll("label")
       .data(legs)
@@ -144,22 +133,40 @@ viz_lib.scatter = function(data) {
       });
   };
 
+  var highlight_ = function(leg) {
+    point
+      .filter(function(d) {
+        return d.leg === leg ? true : false;
+      })
+      .style("fill", "red");
+  };
+
+  var callback = function() {};
+  var callback_ = function(_) {
+    var that = this;
+    if (!arguments.length) return callback;
+    callback = _;
+    return that;
+  };
+
   var _public = {
     plot: plot_,
-    legend: legend_
+    legend: legend_,
+    callback: callback_,
+    highlight: highlight_
   };
 
   return _public;
 };
 
-function callback(data) {
+function visualize(data) {
   // Plot the data
   var scatter = viz_lib.scatter(data);
   scatter.plot();
   scatter.legend();
-
-  // Making the Legend
+  // scatter.hightlight("left");
+  // scatter.callback(scatter.highlight);
 }
 
 var dataPath = "./juggle.csv";
-d3.csv(dataPath, d3.autoType).then(callback);
+d3.csv(dataPath, d3.autoType).then(visualize);
