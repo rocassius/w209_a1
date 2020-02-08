@@ -85,7 +85,9 @@ viz_lib.scatter = function(data) {
   var legend_ = function() {
     var legend = { x: 30, y: 40, space: 45, r: 10 };
 
-    g.selectAll("dots")
+    g.append("g")
+      .attr("class", "legend")
+      .selectAll("dots")
       .data(legs)
       .enter()
       .append("circle")
@@ -98,7 +100,28 @@ viz_lib.scatter = function(data) {
       .attr("r", legend.r)
       .style("fill", function(d) {
         return color(d);
+      })
+      .on("mouseover", function(d) {
+        d3.select(this).style("fill", "red");
+        console.log(d);
       });
+
+    // g
+
+    //   .selectAll("dots")
+    //   .data(legs)
+    //   .enter()
+    //   .append("attr", "circle")
+    //   .attr("d", d3.symbol().type(d3.symbolCircle))
+    //   .attr("r", )
+    //   .style("fill", function(d) {
+    //     return color(d);
+    //   })
+    //   .attr("transform", function(d, i) {
+    //     return (
+    //       "translate(" + legend.x + "," + (legend.y + legend.space * i) + ")"
+    //     );
+    //   });
 
     g.selectAll("label")
       .data(legs)
