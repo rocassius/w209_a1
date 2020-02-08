@@ -21,7 +21,7 @@ viz_lib.scatter = function(data) {
     .domain(legs)
     .range(["#66ccff", "#ffcc66"]);
 
-  //var point;
+  var point = g.selectAll("path.pt");
 
   var plot_ = function() {
     var maxAttempt = d3.max(data.map(d => +d.attempt));
@@ -31,8 +31,7 @@ viz_lib.scatter = function(data) {
     x.domain([0 - pad, maxAttempt + pad]);
     y.domain([0 - pad, maxClaps + pad]);
 
-    // point = g
-    g.selectAll("path.pt")
+    point
       .data(data)
       .enter()
       .append("path")
@@ -104,12 +103,10 @@ viz_lib.scatter = function(data) {
         return color(d);
       })
       .on("mouseover", function(d) {
-        d3.select(this).style("fill", "red");
-        // highlight(d); // This doesn't work
-        //  callback("left");
+        highlight_(d, false);
       })
       .on("mouseout", function(d) {
-        d3.select(this).style("fill", color(d));
+        highlight_(d, true);
       });
 
     g.selectAll("label")
@@ -133,26 +130,22 @@ viz_lib.scatter = function(data) {
       });
   };
 
-  var highlight_ = function(leg) {
-    point
+  var highlight_ = function(leg, restoreColor) {
+    // point // Why isn't this working anymore?
+    g.selectAll("path.pt")
       .filter(function(d) {
-        return d.leg === leg ? true : false;
+        return d.leg === leg ? false : true;
       })
-      .style("fill", "red");
-  };
-
-  var callback = function() {};
-  var callback_ = function(_) {
-    var that = this;
-    if (!arguments.length) return callback;
-    callback = _;
-    return that;
+      //.style("fill", "white");
+      .style("fill", function(d) {
+        if (restoreColor) return color(d.leg);
+        return "white";
+      });
   };
 
   var _public = {
     plot: plot_,
     legend: legend_,
-    callback: callback_,
     highlight: highlight_
   };
 
@@ -164,8 +157,7 @@ function visualize(data) {
   var scatter = viz_lib.scatter(data);
   scatter.plot();
   scatter.legend();
-  // scatter.hightlight("left");
-  // scatter.callback(scatter.highlight);
+  // scatter.highlight("left");
 }
 
 var dataPath = "./juggle.csv";
