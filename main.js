@@ -1,17 +1,18 @@
-/* global d3 */
+/* global d3, crossfilter */
 
 var viz_lib = {};
 
 viz_lib.scatter = function(data) {
   var svg = d3.select("svg").attr("transform", "translate(200, 0)"),
-    margin = { left: 60, right: 260, top: 60, bottom: 60 },
+    margin = { left: 60, right: 60, top: 60, bottom: 60 },
     width = svg.attr("width") - margin.left - margin.right,
     height = svg.attr("height") - margin.top - margin.bottom,
     onBrushed = function() {};
 
   var g = svg
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .call(d3.brushX().on("brush", onBrushed));
 
   var x = d3.scaleLinear().range([0, width]);
   var y = d3.scaleLinear().range([height, 0]);
@@ -104,10 +105,10 @@ viz_lib.scatter = function(data) {
         return color(d);
       })
       .on("mouseover", function(d) {
-        highlight_(d, false);
+        highlight_leg_(d, false);
       })
       .on("mouseout", function(d) {
-        highlight_(d, true);
+        highlight_leg_(d, true);
       });
 
     g.selectAll("label")
@@ -131,17 +132,23 @@ viz_lib.scatter = function(data) {
       });
   };
 
-  var highlight_ = function(leg, restoreColor) {
+  var highlight_leg_ = function(leg, restoreColor) {
     // point // Why isn't this working anymore?
     g.selectAll("path.pt")
       .filter(function(d) {
         return d.leg === leg ? false : true;
       })
-      //.style("fill", "white");
       .style("fill", function(d) {
         if (restoreColor) return color(d.leg);
         return "white";
       });
+  };
+
+  onBrushed = function(selection) {
+    selection.selectAll("path.pt").style("fill", function(d) {
+      console.log(d.leg);
+      return "firebrick";
+    });
   };
 
   var onBrushed_ = function(_) {
@@ -153,7 +160,7 @@ viz_lib.scatter = function(data) {
   var _public = {
     plot: plot_,
     legend: legend_,
-    highlight: highlight_,
+    highlight: highlight_leg_,
     onBrushed: onBrushed_
   };
 
@@ -161,11 +168,20 @@ viz_lib.scatter = function(data) {
 };
 
 function visualize(data) {
-  // Plot the data
-  var scatter = viz_lib.scatter(data);
-  scatter.plot();
-  scatter.legend();
-  // scatter.highlight("left");
+  var cs = crossfilter(data);
+
+  console.log(cs);
+
+  function update() {
+    // Plot the data
+
+    var scatter = viz_lib.scatter(data);
+    scatter.plot();
+    scatter.legend();
+    // scatter.highlight("left");
+  }
+
+  update();
 }
 
 var dataPath = "./juggle.csv";
