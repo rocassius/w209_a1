@@ -6,7 +6,8 @@ viz_lib.scatter = function(data) {
   var svg = d3.select("svg").attr("transform", "translate(200, 0)"),
     margin = { left: 60, right: 260, top: 60, bottom: 60 },
     width = svg.attr("width") - margin.left - margin.right,
-    height = svg.attr("height") - margin.top - margin.bottom;
+    height = svg.attr("height") - margin.top - margin.bottom,
+    onBrushed = function() {};
 
   var g = svg
     .append("g")
@@ -80,7 +81,7 @@ viz_lib.scatter = function(data) {
       .attr("x", width / 2)
       .attr("y", 0 - margin.top / 2)
       .attr("text-anchor", "middle")
-      .text("3 Ball Juggling Claps")
+      .text("Juggling Claps and Attempt Number")
       .style("fill", "gray");
   };
 
@@ -143,10 +144,17 @@ viz_lib.scatter = function(data) {
       });
   };
 
+  var onBrushed_ = function(_) {
+    if (!arguments.length) return onBrushed;
+    onBrushed = _;
+    return onBrushed;
+  };
+
   var _public = {
     plot: plot_,
     legend: legend_,
-    highlight: highlight_
+    highlight: highlight_,
+    onBrushed: onBrushed_
   };
 
   return _public;
