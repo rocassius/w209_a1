@@ -103,10 +103,16 @@ viz_lib.scatter = function(data) {
         return color(d);
       })
       .on("mouseover", function(d) {
-        highlight_(d, false);
+        var subset = function(l) {
+          return l.leg === d ? true : false;
+        };
+        subset_(subset);
       })
-      .on("mouseout", function(d) {
-        highlight_(d, true);
+      .on("mouseout", function() {
+        // highlight_(d, true);
+        subset_(function() {
+          return true;
+        });
       });
 
     g.selectAll("label")
@@ -136,11 +142,18 @@ viz_lib.scatter = function(data) {
       .filter(function(d) {
         return d.leg === leg ? false : true;
       })
-      //.style("fill", "white");
       .style("fill", function(d) {
         if (restoreColor) return color(d.leg);
         return "white";
       });
+  };
+
+  var subset_ = function(subset) {
+    g.selectAll("path.pt")
+      .filter(function(d) {
+        return !subset(d);
+      })
+      .style("fill", "white");
   };
 
   var _public = {
