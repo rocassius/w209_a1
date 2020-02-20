@@ -9,6 +9,16 @@ function scatter() {
     x = d3.scaleLinear().range([0, width]),
     y = d3.scaleLinear().range([height, 0]);
 
+  var onBrushed = function() {};
+
+  // var onBrushed = function() {
+  //   var s = d3.event.selection;
+  //   filter_point = function(d) {
+  //     return s[0] <= x(d.attempt) && x(d.attempt) <= s[1] ? true : false;
+  //   };
+  //   update();
+  // };
+
   // Set dimensions for plot
   var data_bounds = { maxAttempt: 100, maxClaps: 100 };
 
@@ -35,14 +45,21 @@ function scatter() {
         .attr("width", svgWidth)
         .attr("height", svgHeight);
 
+      // Create brush for plot
+      const brush = d3
+        .brushX()
+        .extent([
+          [0, 0],
+          [width, height]
+        ])
+        .on("brush", onBrushed);
+
       // Update the inner dimensions.
       var g = svg
         .merge(svgEnter)
         .select("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-      // var maxAttempt = d3.max(data.map(d => +d.attempt));
-      // var maxClaps = d3.max(data.map(d => +d.claps));
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .call(brush);
 
       var pad = 1;
       x.domain([0 - pad, data_bounds.maxAttempt + pad]);
@@ -169,6 +186,12 @@ function scatter() {
     if (!arguments.length) return filter_point;
     filter_point = _;
     return filter_point;
+  };
+
+  scatter_plot.onBrushed = function(_) {
+    if (!arguments.length) return onBrushed;
+    onBrushed = _;
+    return scatter_plot;
   };
 
   return scatter_plot;
