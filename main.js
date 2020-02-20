@@ -1,22 +1,20 @@
-scatterPlot = scatter();
+/* global d3, scatter */
+
+var scatterPlot = scatter();
 
 function visualize(data) {
-  var cs = crossfilter(data);
-  cs.dimClaps = cs.dimension(function(d) {
-    return d.claps;
-  });
-  cs.dimAttempt = cs.dimension(function(d) {
-    return d.attempt;
-  });
-  cd.dimLeg = cs.dimension(function(d) {
-    return d.leg;
+  scatterPlot.data_bounds(data);
+  scatterPlot.filter_point(function(d) {
+    return d.leg === "left" ? true : false;
   });
 
-  function update() {
-    //...
+  function update(data) {
+    d3.selection("#scatterPlot")
+      .datum(data)
+      .call(scatterPlot);
   }
 
-  update();
+  update(data);
 }
 
 var dataPath = "./juggle.csv";

@@ -1,11 +1,21 @@
 /* global d3 */
 
 function scatter() {
-  var margin = { left: 60, right: 60, top: 60, bottom: 60 },
-    width = 600,
-    height = 600,
+  var margin = { left: 60, right: 60, top: 60, bottom: 40 },
+    width = 450,
+    height = 400,
+    svgWidth = 800,
+    svgHeight = 800,
     x = d3.scaleLinear().range([0, width]),
     y = d3.scaleLinear().range([height, 0]);
+
+  // Set dimensions for plot
+  var data_bounds = { maxAttempt: 100, maxClaps: 100 };
+
+  // Filtering function for points
+  var filter_point = function() {
+    return true;
+  };
 
   function scatter_plot(selection) {
     selection.each(function(data) {
@@ -22,8 +32,8 @@ function scatter() {
       // Update the outer dimensions.
       svg
         .merge(svgEnter)
-        .attr("width", width)
-        .attr("height", height);
+        .attr("width", svgWidth)
+        .attr("height", svgHeight);
 
       // Update the inner dimensions.
       var g = svg
@@ -31,12 +41,12 @@ function scatter() {
         .select("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-      var maxAttempt = d3.max(data.map(d => +d.attempt));
-      var maxClaps = d3.max(data.map(d => +d.claps));
+      // var maxAttempt = d3.max(data.map(d => +d.attempt));
+      // var maxClaps = d3.max(data.map(d => +d.claps));
 
       var pad = 1;
-      x.domain([0 - pad, maxAttempt + pad]);
-      y.domain([0 - pad, maxClaps + pad]);
+      x.domain([0 - pad, data_bounds.maxAttempt + pad]);
+      y.domain([0 - pad, data_bounds.maxClaps + pad]);
 
       var legs = Array.from(new Set(data.map(d => d.leg)));
       var color = d3
@@ -50,6 +60,7 @@ function scatter() {
           return d;
         })
         .enter()
+        .filter(filter_point)
         .append("path")
         .attr("class", "pt")
         .attr("d", d3.symbol().type(d3.symbolCircle))
@@ -90,7 +101,7 @@ function scatter() {
           "translate(" +
             width / 2 +
             "," +
-            (height + (2 * margin.bottom) / 3) +
+            (height + (2 * margin.bottom) / 3 + 5) +
             ")"
         )
         .text("Attempt");
@@ -144,6 +155,20 @@ function scatter() {
     if (!arguments.length) return y;
     y = _;
     return scatter_plot;
+  };
+
+  // Function for setting the bounds of the data for the scatter d3.polygonCentroid(polygon)
+  scatter_plot.data_bounds = function(data) {
+    if (!arguments.length) return data_bounds;
+    data_bounds.maxAttempt = d3.max(data.map(d => +d.attempt));
+    data_bounds.maxClaps = d3.max(data.map(d => +d.claps));
+    return scatter_plot;
+  };
+
+  scatter_plot.filter_point = function(_) {
+    if (!arguments.length) return filter_point;
+    filter_point = _;
+    return filter_point;
   };
 
   return scatter_plot;
