@@ -1,23 +1,16 @@
 /* global d3 */
 
 function scatter() {
-  var margin = { left: 60, right: 60, top: 60, bottom: 40 },
+  var margin = { left: 60, right: 30, top: 10, bottom: 40 },
     width = 450,
     height = 400,
-    svgWidth = 800,
-    svgHeight = 800,
+    svgWidth = 550,
+    svgHeight = 500,
     x = d3.scaleLinear().range([0, width]),
     y = d3.scaleLinear().range([height, 0]);
 
   var onBrushed = function() {};
-
-  // var onBrushed = function() {
-  //   var s = d3.event.selection;
-  //   filter_point = function(d) {
-  //     return s[0] <= x(d.attempt) && x(d.attempt) <= s[1] ? true : false;
-  //   };
-  //   update();
-  // };
+  var callback = function() {};
 
   // Set dimensions for plot
   var data_bounds = { maxAttempt: 100, maxClaps: 100 };
@@ -44,6 +37,15 @@ function scatter() {
         .merge(svgEnter)
         .attr("width", svgWidth)
         .attr("height", svgHeight);
+
+      onBrushed = function() {
+        var s = d3.event.selection;
+        var subset = function(d) {
+          return s[0] <= x(d.attempt) && x(d.attempt) <= s[1] ? true : false;
+        };
+        subset_points(subset);
+        callback(subset);
+      };
 
       // Create brush for plot
       const brush = d3
@@ -73,9 +75,7 @@ function scatter() {
 
       var points = g
         .selectAll(".point")
-        .data(function(d) {
-          return d;
-        })
+        .data(d => d)
         .enter()
         .filter(filter_point)
         .append("path")
@@ -87,6 +87,18 @@ function scatter() {
         .attr("transform", function(d) {
           return "translate(" + x(d.attempt) + "," + y(d.claps) + ")";
         });
+
+      var subset_points = function(subset) {
+        points
+          .style("fill", function(d) {
+            if (subset(d)) return color(d.leg);
+            return "gray";
+          })
+          .style("opacity", function(d) {
+            if (subset(d)) return 1;
+            return 0.2;
+          });
+      };
 
       // g.selectAll("path.pt")
       //   .data(data)
@@ -132,15 +144,15 @@ function scatter() {
         )
         .text("Number of Claps");
 
-      g.append("text")
-        .attr("class", "title")
-        .attr("x", width / 2)
-        .attr("y", 0 - margin.top / 2)
-        .attr("text-anchor", "middle")
-        .text("Juggling Claps and Attempt Number")
-        .style("fill", "gray");
+      // g.append("text")
+      //   .attr("class", "title")
+      //   .attr("x", width / 2)
+      //   .attr("y", 0 - margin.top / 2)
+      //   .attr("text-anchor", "middle")
+      //   .text("Juggling Claps and Attempt Number")
+      //   .style("fill", "gray");
 
-      points.exit().remove();
+      // points.exit().remove();
     });
   }
 
@@ -171,6 +183,12 @@ function scatter() {
   scatter_plot.y = function(_) {
     if (!arguments.length) return y;
     y = _;
+    return scatter_plot;
+  };
+
+  scatter_plot.callback = function(_) {
+    if (!arguments.length) return callback;
+    callback = _;
     return scatter_plot;
   };
 

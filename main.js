@@ -1,31 +1,29 @@
-/* global d3, scatter */
+/* global d3, scatter, barChart */
 
 var scatterPlot = scatter();
+var meanBarChart = barChart();
 
 function visualize(data) {
   scatterPlot.data_bounds(data);
+  meanBarChart.data_bounds(data);
 
-  scatterPlot.onBrushed(function() {
-    var s = d3.event.selection;
-    console.log(s);
-    var x = scatterPlot.x;
-    scatterPlot.filter_point = function(d) {
-      return s[0] <= x(d.attempt) && x(d.attempt) <= s[1] ? true : false;
-    };
-    update(data);
+  scatterPlot.callback(function(subset) {
+    meanBarChart.filter_point(subset);
+    meanBarChart.update_means();
+    console.log("HERE");
   });
 
-  // scatterPlot.filter_point(function(d) {
-  //   return d.leg === "left" ? true : false;
-  // });
-
-  function update(data) {
-    d3.selection("#scatterPlot")
+  function update() {
+    d3.select("#scatterPlot")
       .datum(data)
       .call(scatterPlot);
+
+    d3.select("#barChart")
+      .datum(data)
+      .call(meanBarChart);
   }
 
-  update(data);
+  update();
 }
 
 var dataPath = "./juggle.csv";
