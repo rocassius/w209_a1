@@ -2,7 +2,18 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no"
+		/>
+
 		<title>Rowan's Juggling Viz</title>
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+			integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+			crossorigin="anonymous"
+		/>
 		<link rel="stylesheet" href="./style.css" />
 	</head>
 	<body>
@@ -28,17 +39,41 @@
 			Additionally, the data suggest that balancing on my right leg was no more
 			or less helpful than balancing on my left.
 		</div> -->
-		<div>
+		<div class="container">
 			<h1>Juggling Progress Trajectory</h1>
 
 			<div class="row">
-				<div>
+				<div class="col-lg-3">
+					<h2>Description</h2>
+					<p id="description">
+						I recorded how many times I could successfully toss juggling 3 balls
+						up and clap before catching them in a single continuous streak while
+						balancing on one leg.
+					</p>
+					<h4>Insights</h4>
+					<ol id="description" type="1">
+						<li>
+							The longest clapping streaks occur during high attempt numbers
+							because I'd had substantial practice by then.
+						</li>
+						<li>
+							My right leg average is higher then my left average in the first
+							half, but my left average overtake my right in the later attempts.
+						</li>
+						<li>
+							Although my left leg may appear less reliable because I achieved 0
+							claps twice while on my left leg, I also achieved my personal
+							record of 16 while on my left.
+						</li>
+					</ol>
+				</div>
+
+				<div class="col-lg-5">
 					<h2>Claps and Attempts</h2>
 					<div class="chart" id="scatterPlot"></div>
 				</div>
 
-				<!-- <div class="col-xs-6 col-md-3 col-lg-2"> -->
-				<div>
+				<div class="col-lg-4">
 					<h2>Mean Claps by Leg</h2>
 					<div class="chart" id="barChart"></div>
 				</div>
@@ -46,10 +81,8 @@
 		</div>
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.min.js"></script>
-
 		<script src="https://d3js.org/d3-drag.v1.min.js"></script>
 		<script src="https://d3js.org/d3-brush.v1.min.js"></script>
-
 		<script src="https://d3js.org/d3.v5.js"></script>
 		<script src="https://d3js.org/d3-shape.v1.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-scale/1.0.7/d3-scale.min.js"></script>

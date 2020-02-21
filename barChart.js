@@ -4,7 +4,7 @@ function barChart() {
   var margin = { left: 60, right: 60, top: 10, bottom: 40 },
     height = 400,
     barWidth = 40,
-    svgWidth = 300,
+    svgWidth = 200,
     svgHeight = 600,
     space = 10,
     x = d3.scaleBand().padding(0.1),
@@ -46,7 +46,7 @@ function barChart() {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
       var pad = 1;
-      y.domain([0 - pad, data_bounds.maxClaps + pad]);
+      y.domain([0, data_bounds.maxClaps + pad]);
 
       // color
       var legs = Array.from(new Set(data.map(d => d.leg)));
@@ -97,12 +97,6 @@ function barChart() {
           .style("fill", d => color(d.leg))
           .attr("height", d => y(d.mean));
 
-        // .attr("x", function(d, i) {
-        //   console.log(d);
-        //   return space + 2 + i * (barWidth + space);
-        // })
-        // .attr("y", d => height - y(d.mean));
-
         g.selectAll(".value").remove();
 
         barsGroup
@@ -111,26 +105,7 @@ function barChart() {
           .attr("y", -barWidth / 5)
           .attr("x", barWidth / 2)
           .text(d => d.mean.toFixed(2));
-
-        // g.append("text").text("HELLO");
-
-        // bar
-        //   .append("text")
-        //   .attr("x", (3 * barWidth) / 5)
-        //   .attr("y", barWidth / 2)
-        //   .attr("dy", ".35em")
-        //   .text(function(d) {
-        //     return d;
-        //   });
-        console.log("Should have been done");
-
-        //bars.exit().remove();
       };
-
-      // g.append("g")
-      //   .attr("class", "axis_x")
-      //   .attr("transform", "translate(0," + height + ")")
-      //   .call(d3.axisBottom(x).tickSize(6, 0));
 
       update_means();
     });

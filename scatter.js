@@ -2,7 +2,7 @@
 
 function scatter() {
   var margin = { left: 60, right: 30, top: 10, bottom: 40 },
-    width = 450,
+    width = 400,
     height = 400,
     svgWidth = 550,
     svgHeight = 500,
@@ -52,7 +52,7 @@ function scatter() {
         .brushX()
         .extent([
           [0, 0],
-          [width, height]
+          [width + 20, height]
         ])
         .on("brush", onBrushed);
 
@@ -65,7 +65,7 @@ function scatter() {
 
       var pad = 1;
       x.domain([0 - pad, data_bounds.maxAttempt + pad]);
-      y.domain([0 - pad, data_bounds.maxClaps + pad]);
+      y.domain([0, data_bounds.maxClaps + pad]);
 
       var legs = Array.from(new Set(data.map(d => d.leg)));
       var color = d3
@@ -100,19 +100,6 @@ function scatter() {
           });
       };
 
-      // g.selectAll("path.pt")
-      //   .data(data)
-      //   .enter()
-      //   .append("path")
-      //   .attr("class", "pt")
-      //   .attr("d", d3.symbol().type(d3.symbolCircle))
-      //   .style("fill", function(d) {
-      //     return color(d.leg);
-      //   })
-      //   .attr("transform", function(d) {
-      //     return "translate(" + x(d.attempt) + "," + y(d.claps) + ")";
-      //   });
-
       g.append("g")
         .attr("class", "axis_x")
         .attr("transform", "translate(0," + height + ")")
@@ -143,16 +130,6 @@ function scatter() {
           "translate(" + -margin.left / 2 + "," + height / 2 + ")rotate(-90)"
         )
         .text("Number of Claps");
-
-      // g.append("text")
-      //   .attr("class", "title")
-      //   .attr("x", width / 2)
-      //   .attr("y", 0 - margin.top / 2)
-      //   .attr("text-anchor", "middle")
-      //   .text("Juggling Claps and Attempt Number")
-      //   .style("fill", "gray");
-
-      // points.exit().remove();
     });
   }
 

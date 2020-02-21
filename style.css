@@ -35,9 +35,26 @@ body {
   margin: 25px 50px 75px 50px;
 }
 
-#chart .x.axis path {
-  display: none;
+#description {
+  font-size: 10pt;
 }
+
+/*#wrapper {
+  display: table;
+  width: 1000px;
+}
+
+#row {
+  display: table-row;
+}
+
+#scatterPlot {
+  display: table-cell;
+}
+
+#barChart {
+  display: table-cell;
+}*/
 
 /*#pagetitle {
   text-align: center;
