@@ -1,11 +1,11 @@
 /* global d3 */
 
 function scatter() {
-  var margin = { left: 60, right: 30, top: 10, bottom: 40 },
+  var margin = { left: 60, right: 30, top: 10, bottom: 90 },
     width = 400,
     height = 400,
     svgWidth = 550,
-    svgHeight = 500,
+    svgHeight = 550,
     x = d3.scaleLinear().range([0, width]),
     y = d3.scaleLinear().range([height, 0]);
 
@@ -117,7 +117,7 @@ function scatter() {
           "translate(" +
             width / 2 +
             "," +
-            (height + (2 * margin.bottom) / 3 + 5) +
+            (height + margin.bottom / 3 + 5) +
             ")"
         )
         .text("Attempt");
@@ -130,6 +130,92 @@ function scatter() {
           "translate(" + -margin.left / 2 + "," + height / 2 + ")rotate(-90)"
         )
         .text("Number of Claps");
+
+      //descriptions
+      g.append("text")
+        .attr("class", "axis_label")
+        .attr("text-anchor", "left")
+        .attr(
+          "transform",
+          "translate(" + 0 + "," + (height + margin.bottom / 2 + 20) + ")"
+        )
+        .text("* brush the chart to subset points by attempt")
+        .style("font-size", "10pt")
+        .style("fill", "black")
+        .style("font-style", "italic");
+
+      g.append("text")
+        .attr("class", "axis_label")
+        .attr("text-anchor", "left")
+        .attr(
+          "transform",
+          "translate(" + 0 + "," + (height + margin.bottom / 2 + 35) + ")"
+        )
+        .text("* hover over legend colors to subset points by leg")
+        .style("font-size", "10pt")
+        .style("fill", "black")
+        .style("font-style", "italic");
+
+      var legend_ = function() {
+        var legend = { x: 30, y: 40, space: 45, r: 10 };
+
+        g.attr("class", "legend")
+          .selectAll("dots")
+          .data(legs)
+          .enter()
+          .append("circle")
+          .attr("cx", function() {
+            return legend.x;
+          })
+          .attr("cy", function(d, i) {
+            return legend.y + legend.space * i;
+          })
+          .attr("r", legend.r)
+          .style("fill", function(d) {
+            return color(d);
+          })
+          .on("mouseover", function(d) {
+            highlight_(d, false);
+          })
+          .on("mouseout", function(d) {
+            highlight_(d, true);
+          });
+
+        g.selectAll("label")
+          .data(legs)
+          .enter()
+          .append("text")
+          .attr("class", "label")
+          .attr("x", function() {
+            return legend.x + 2 * legend.r;
+          })
+          .attr("y", function(d, i) {
+            return legend.y + legend.space * i;
+          })
+          .text(function(d) {
+            return d + " leg";
+          })
+          .attr("text-anchor", "left")
+          .style("alignment-baseline", "middle")
+          .style("fill", function(d) {
+            return color(d);
+          });
+      };
+
+      var highlight_ = function(leg, restoreColor) {
+        // point // Why isn't this working anymore?
+        g.selectAll("path.pt")
+          .filter(function(d) {
+            return d.leg === leg ? false : true;
+          })
+          //.style("fill", "white");
+          .style("fill", function(d) {
+            if (restoreColor) return color(d.leg);
+            return "white";
+          });
+      };
+
+      legend_();
     });
   }
 

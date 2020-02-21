@@ -1,13 +1,12 @@
 /* global d3 */
 
 function barChart() {
-  var margin = { left: 60, right: 60, top: 10, bottom: 40 },
+  var margin = { left: 60, right: 60, top: 10, bottom: 90 },
     height = 400,
     barWidth = 40,
     svgWidth = 200,
     svgHeight = 600,
     space = 10,
-    x = d3.scaleBand().padding(0.1),
     y = d3.scaleLinear().range([0, height]);
 
   var data_bounds = { maxAttempt: 100, maxClaps: 100 };
